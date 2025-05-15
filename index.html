@@ -85,7 +85,7 @@
   <div class="container">
     
 
-    <div class="job-section">
+    <div class="job-section" id="job-info">
   <h2>Job Information</h2>
   <label>Job Name: <input type="text"></label>
   <label>Job Address: <input type="text"></label>
@@ -284,7 +284,7 @@
       doc.setTextColor(0);
       let y = 30;
 
-      const jobSection = document.querySelector('.job-section');
+      const jobSection = document.querySelector('#job-info');
       const jobName = jobSection.querySelector('label:nth-of-type(1) input')?.value || '';
       const jobAddress = jobSection.querySelector('label:nth-of-type(2) input')?.value || '';
       const clientPhone = jobSection.querySelector('label:nth-of-type(3) input')?.value || '';
