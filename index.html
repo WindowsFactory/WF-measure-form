@@ -83,6 +83,39 @@
     <h1>Job Measurement Form</h1>
   </header>
   <div class="container">
+    <div class="job-section">
+      <h2>Job Information</h2>
+      <label>Job Name: <input type="text"></label>
+      <label>Job Address: <input type="text"></label>
+      <label>Client Contact Number: <input type="number"></label>
+      <label>Client Email Address: <input type="email"></label>
+      <label>Quoted By: <input type="text"></label>
+      <label>Date Measured: <input type="text" placeholder="DD/MM/YYYY"></label>
+      <label>Window Colour:
+        <select>
+          <option>White</option>
+          <option>Cream</option>
+          <option>Anthracite Grey</option>
+          <option>Window Grey</option>
+          <option>Jett Black</option>
+          <option>Golden Oak</option>
+          <option>Turner Oak Malt</option>
+          <option>Turner Oak Walnut</option>
+          <option>Turner Oak Toffee</option>
+        </select>
+      </label>
+      <label>Installation Method:
+        <select>
+          <option>Insert (aluminium)</option>
+          <option>Insert (timber)</option>
+          <option>Full rip out (double brick)</option>
+          <option>Full rip out (timber frame)</option>
+          <option>New opening (no removal)</option>
+          <option>No installation required</option>
+        </select>
+      </label>
+    </div>
+
     <div id="formContainer"></div>
     <button class="button" onclick="addItem()">+ Add Item</button>
     <div class="job-section">
@@ -120,7 +153,7 @@
 
     
     <div class="job-section">
-      <h2>Final Job Information</h2>
+      <h2>Job Notes</h2>
       <p style="font-size: 0.9em; color: #555; margin-top: -10px;">Include information about parking, access, additional trims, special circumstances or anything you can think of while measuring the job.</p>
       <label><textarea id="final-notes" rows="6" placeholder="Enter any final site notes or special instructions..."></textarea></label>
     </div>
