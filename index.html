@@ -428,8 +428,13 @@
         y += 7;
       });
 
-      doc.save("job-measurements.pdf");
+      // Removed auto-close to allow editing after PDF generation
+// doc.save("job-measurements.pdf");
+const blob = doc.output('blob');
+const fileURL = URL.createObjectURL(blob);
+window.open(fileURL, '_blank');
   })();
 }</script>
 </body>
 </html>
+
