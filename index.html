@@ -435,6 +435,79 @@ const fileURL = URL.createObjectURL(blob);
 window.open(fileURL, '_blank');
   })();
 }</script>
+<button class="button" onclick="saveFormData()">Save Form</button>
+    <button class="button" onclick="loadFormData()">Load Saved Form</button>
+    <button class="button" onclick="resetFormData()">Clear Saved Data</button>
+
+<script>
+function saveFormData() {
+  const data = {
+    jobInfo: Array.from(document.querySelectorAll('#job-info input, #job-info select')).map(el => el.value),
+    jobNotes: document.getElementById('final-notes').value
+  };
+  const items = Array.from(document.querySelectorAll('.item')).map(item => {
+    return {
+      html: item.innerHTML,
+      sketch: item.querySelector('canvas')?.toDataURL()
+    };
+  });
+  data.items = items;
+  localStorage.setItem('jobFormData', JSON.stringify(data));
+  alert('Form data saved locally.');
+}
+
+function loadFormData() {
+  const data = JSON.parse(localStorage.getItem('jobFormData'));
+  if (!data) return alert('No saved data found.');
+
+  const fields = document.querySelectorAll('#job-info input, #job-info select');
+  data.jobInfo.forEach((val, idx) => {
+    if (fields[idx]) fields[idx].value = val;
+  });
+  document.getElementById('final-notes').value = data.jobNotes || '';
+
+  // restore items with canvas
+  if (data.items) {
+    const container = document.getElementById('formContainer');
+    container.innerHTML = '';
+    data.items.forEach((entry, index) => {
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.id = `item-${index + 1}`;
+      div.innerHTML = entry.html;
+      container.appendChild(div);
+      initCanvas(index + 1);
+      const canvas = div.querySelector('canvas');
+      if (canvas && entry.sketch) {
+        const img = new Image();
+        img.onload = () => {
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+        };
+        img.src = entry.sketch;
+      }
+    });
+    itemCount = data.items.length;
+  }
+  alert('Saved form data loaded.');
+}
+
+function resetFormData() {
+  localStorage.removeItem('jobFormData');
+  alert('Saved form data cleared.');
+}
+
+
+setInterval(() => {
+  const data = {
+    jobInfo: Array.from(document.querySelectorAll('#job-info input, #job-info select')).map(el => el.value),
+    jobNotes: document.getElementById('final-notes').value
+  };
+  localStorage.setItem('jobFormData', JSON.stringify(data));
+  console.log('Form auto-saved.');
+}, 10000);
+
+</script>
 </body>
 </html>
 
