@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Job Measurement Form</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -72,12 +71,6 @@
     .file-upload-container input[type="file"] {
       display: block;
     }
-    @media (max-width: 600px) {
-      canvas {
-        width: 100% !important;
-        height: auto !important;
-      }
-    }
   </style>
 </head>
 <body>
@@ -86,51 +79,46 @@
     <h1>Job Measurement Form</h1>
   </header>
   <div class="container">
+    
+
     <div class="job-section" id="job-info">
-      <h2>Job Information</h2>
-      <label>Job Name: <input type="text"></label>
-      <label>Job Address: <input type="text"></label>
-      <label>Client Contact Number: <input type="number"></label>
-      <label>Client Email Address: <input type="email"></label>
-      <label>Quoted By: <input type="text"></label>
-      <label>Date Measured: <input type="text" placeholder="DD/MM/YYYY"></label>
-      <label>Window/Door Colour:
-        <select>
-          <option>White</option>
-          <option>Cream</option>
-          <option>Anthracite Grey</option>
-          <option>Window Grey</option>
-          <option>Jett Black</option>
-          <option>Golden Oak</option>
-          <option>Turner Oak Malt</option>
-          <option>Turner Oak Walnut</option>
-          <option>Turner Oak Toffee</option>
-        </select>
-      </label>
-      <label>Installation Method:
-        <select>
-          <option>Insert (aluminium)</option>
-          <option>Insert (timber)</option>
-          <option>Full rip out (double brick)</option>
-          <option>Full rip out (timber frame)</option>
-          <option>New opening (no removal)</option>
-          <option>No installation required</option>
-        </select>
-      </label>
-      <label>Glazing Requirements?
-        <select>
-          <option>LowE</option>
-          <option>Light Acoustic</option>
-          <option>Heavy Acoustic</option>
-          <option>Thermal and Acoustic</option>
-          <option>Budget conscious (no LowE or laminate)</option>
-        </select>
-      </label>
-    </div>
+  <h2>Job Information</h2>
+  <label>Job Name: <input type="text"></label>
+  <label>Job Address: <input type="text"></label>
+  <label>Client Contact Number: <input type="number"></label>
+  <label>Client Email Address: <input type="email"></label>
+  <label>Quoted By: <input type="text"></label>
+  <label>Date Measured: <input type="text" placeholder="DD/MM/YYYY"></label>
+  <label>Window Colour:
+    <select>
+      <option>White</option>
+      <option>Cream</option>
+      <option>Anthracite Grey</option>
+      <option>Window Grey</option>
+      <option>Jett Black</option>
+      <option>Golden Oak</option>
+      <option>Turner Oak Malt</option>
+      <option>Turner Oak Walnut</option>
+      <option>Turner Oak Toffee</option>
+    </select>
+  </label>
+  <label>Installation Method:
+    <select>
+      <option>Insert (aluminium)</option>
+      <option>Insert (timber)</option>
+      <option>Full rip out (double brick)</option>
+      <option>Full rip out (timber frame)</option>
+      <option>New opening (no removal)</option>
+      <option>No installation required</option>
+    </select>
+  </label>
+</div>
 
-    <div id="formContainer"></div>
+<div id="formContainer"></div>
     <button class="button" onclick="addItem()">+ Add Item</button>
+    
 
+    
     <div class="job-section">
       <h2>Job Notes</h2>
       <p style="font-size: 0.9em; color: #555; margin-top: -10px;">Include information about parking, access, additional trims, special circumstances or anything you can think of while measuring the job.</p>
@@ -139,6 +127,7 @@
     <button class="button" onclick="generatePDF()">Generate PDF</button>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
     let itemCount = 0;
 
@@ -153,7 +142,7 @@
         <label>Item Name: <input class="field-name" type="text"></label>
         <div class="row">
           <div class="left">
-            <label>Window/Door Type:
+            <label>Window Type:
               <select class="field-type">
                 <option>Tilt and turn window</option>
                 <option>Tilt before Turn window</option>
@@ -210,17 +199,12 @@
               </select>
             </label>
             <label>Reveal Size (if required): <input type="text"></label>
-            <label>Access Confirmed for Item?:
-              <select>
-                <option>Yes</option>
-                <option>No</option>
-              </select>
-            </label>
             <label>Additional Information: <textarea rows="3"></textarea></label>
+            
           </div>
           <div class="right">
             <label>Sketch:</label>
-            <canvas id="canvas-${itemCount}" width="300" height="200"></canvas>
+<canvas id="canvas-${itemCount}" width="300" height="200"></canvas>
             <button class="button" type="button" onclick="clearCanvas(${itemCount})">Clear Sketch</button>
           </div>
         </div>
@@ -230,109 +214,299 @@
     }
 
     function initCanvas(id) {
-      const canvas = document.getElementById(`canvas-${id}`);
-      const ctx = canvas.getContext('2d');
-      let drawing = false;
-      let lastX = 0;
-      let lastY = 0;
+  const canvas = document.getElementById(`canvas-${id}`);
+  const ctx = canvas.getContext('2d');
+  let drawing = false;
 
-      canvas.addEventListener('mousedown', (e) => {
-        drawing = true;
-        const rect = canvas.getBoundingClientRect();
-        lastX = e.clientX - rect.left;
-        lastY = e.clientY - rect.top;
-        ctx.beginPath();
-        ctx.moveTo(lastX, lastY);
-      });
-
-      canvas.addEventListener('mouseup', () => {
-        drawing = false;
-      });
-
-      canvas.addEventListener('mousemove', (e) => {
-        if (!drawing) return;
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        ctx.lineTo(x, y);
-        ctx.stroke();
-        lastX = x;
-        lastY = y;
-      });
+  function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    if (e.touches) {
+      return {
+        x: e.touches[0].clientX - rect.left,
+        y: e.touches[0].clientY - rect.top
+      };
+    } else {
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
     }
+  }
+
+  function startDraw(e) {
+    drawing = true;
+    const pos = getPos(e);
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y);
+    e.preventDefault();
+  }
+
+  function draw(e) {
+    if (!drawing) return;
+    const pos = getPos(e);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+    e.preventDefault();
+  }
+
+  function endDraw(e) {
+    drawing = false;
+    e.preventDefault();
+  }
+
+  canvas.addEventListener('mousedown', startDraw);
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', endDraw);
+  canvas.addEventListener('mouseleave', endDraw);
+
+  canvas.addEventListener('touchstart', startDraw, { passive: false });
+  canvas.addEventListener('touchmove', draw, { passive: false });
+  canvas.addEventListener('touchend', endDraw);
+  canvas.addEventListener('touchcancel', endDraw);
+}
 
     function clearCanvas(id) {
       const canvas = document.getElementById(`canvas-${id}`);
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.beginPath();
     }
 
-    async function generatePDF() {
+    function generatePDF() {
+  (async () => {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
-      let y = 10;
+      
 
-      function addLine(title, value) {
-        doc.setFont(undefined, 'bold');
-        doc.text(`${title}:`, 10, y);
-        doc.setFont(undefined, 'normal');
-        doc.text(`${value}`, 60, y);
-        y += 8;
-      }
+      doc.setTextColor(0);
+      let y = 30;
 
-      const jobSection = document.getElementById("job-info");
-      const inputs = jobSection.querySelectorAll("input, select");
-      doc.setFontSize(16);
-      doc.text("Job Information", 10, y);
+      const jobSection = document.querySelector('#job-info');
+      const jobName = jobSection.querySelector('label:nth-of-type(1) input')?.value || '';
+      const jobAddress = jobSection.querySelector('label:nth-of-type(2) input')?.value || '';
+      const clientPhone = jobSection.querySelector('label:nth-of-type(3) input')?.value || '';
+      const clientEmail = jobSection.querySelector('label:nth-of-type(4) input')?.value || '';
+      const quotedBy = jobSection.querySelector('label:nth-of-type(5) input')?.value || '';
+      const dateMeasured = jobSection.querySelector('label:nth-of-type(6) input')?.value || '';
+      const windowColour = jobSection.querySelector('label:nth-of-type(7) select')?.value || '';
+      const installationMethod = jobSection.querySelector('label:nth-of-type(8) select')?.value || '';
+
+      doc.setFontSize(14);
+      doc.setFont(undefined, 'bold');
+      doc.text('Job Information', 10, y);
+      doc.setFontSize(11);
       y += 10;
-      inputs.forEach(input => addLine(input.previousSibling.textContent.trim().replace(':', ''), input.value));
 
-      const items = document.querySelectorAll(".item");
+      const jobFields = [
+        ['Job Name', jobName],
+        ['Job Address', jobAddress],
+        ['Client Contact Number', clientPhone],
+        ['Client Email Address', clientEmail],
+        ['Quoted By', quotedBy],
+        ['Date Measured', dateMeasured],
+        ['Window Colour', windowColour],
+        ['Installation Method', installationMethod],
+      ];
+
+      jobFields.forEach(([label, value]) => {
+        doc.setFont(undefined, 'bold');
+        doc.text(`${label}:`, 10, y);
+        doc.setFont(undefined, 'normal');
+        const splitValue = doc.splitTextToSize(value, 130);
+        doc.text(splitValue, 60, y);
+        y += splitValue.length * 7;
+      });
+
+      y += 10;
+
+      const items = document.getElementsByClassName('item');
       for (let i = 0; i < items.length; i++) {
         const item = items[i];
-        if (y > 250) {
-          doc.addPage();
-          y = 10;
-        }
-        doc.setFontSize(14);
-        doc.text(`Item ${i + 1}`, 10, y);
-        y += 8;
 
-        const itemInputs = item.querySelectorAll("input, select, textarea");
-        itemInputs.forEach(input => {
-          const label = input.closest("label")?.textContent?.split(":"[0])?.trim();
-          if (label && input.type !== "button") {
-            addLine(label, input.value || input.textContent || '');
-          }
+        // Estimate space required
+        const name = item.querySelector('.field-name')?.value || '';
+        const type = item.querySelector('.field-type')?.value || '';
+        const height = item.querySelector('.field-height')?.value || '';
+        const width = item.querySelector('.field-width')?.value || '';
+        const restrictors = item.querySelectorAll('select')[1]?.value || '';
+        const flyscreen = item.querySelectorAll('select')[2]?.value || '';
+        const externalFinish = item.querySelectorAll('select')[3]?.value || '';
+        const internalFinish = item.querySelectorAll('select')[4]?.value || '';
+        const revealSize = item.querySelectorAll('input[type="text"]')[1]?.value || '';
+        const notes = item.querySelector('textarea')?.value || '';
+        const canvas = item.querySelector('canvas');
+        const imgData = canvas?.toDataURL('image/png');
+
+        const dummy = new jsPDF();
+        const fields = [name, type, width, height, restrictors, flyscreen, externalFinish, internalFinish, revealSize, notes];
+        let estimatedHeight = 20;
+        fields.forEach(val => {
+          const lines = dummy.splitTextToSize(val, 90);
+          estimatedHeight += lines.length * 7;
+        });
+        estimatedHeight += 40; // image space
+
+        if (y + estimatedHeight > 280) {
+          doc.addPage();
+          y = 20;
+        }
+
+        doc.setFontSize(14);
+        doc.setFont(undefined, 'bold');
+        doc.text(`Item ${i + 1}`, 10, y);
+        doc.setFontSize(11);
+        y += 10;
+
+        const allFields = [
+          ['Item Name', name],
+          ['Type', type],
+          ['Width (mm)', width],
+          ['Height (mm)', height],
+          ['Restrictors', restrictors],
+          ['Flyscreen', flyscreen],
+          ['External Finish', externalFinish],
+          ['Internal Finish', internalFinish],
+          ['Reveal Size', revealSize],
+          ['Additional Notes', notes],
+        ];
+
+        let maxTextY = y;
+        allFields.forEach(([label, value]) => {
+          doc.setFont(undefined, 'bold');
+          doc.text(`${label}:`, 10, maxTextY);
+          doc.setFont(undefined, 'normal');
+          const splitValue = doc.splitTextToSize(value, 90);
+          doc.text(splitValue, 60, maxTextY);
+          maxTextY += splitValue.length * 7;
         });
 
-        const canvas = item.querySelector("canvas");
-        if (canvas) {
-          const imgData = canvas.toDataURL("image/png");
-          if (y + 60 > 280) {
-            doc.addPage();
-            y = 10;
-          }
-          doc.addImage(imgData, "PNG", 10, y, 80, 50);
-          y += 60;
+        if (imgData) {
+          const imageHeight = 40;
+          const imageWidth = 60;
+          const imageY = y;
+          const imageX = 135;
+
+          doc.setDrawColor(0);
+          doc.setLineWidth(0.5);
+          doc.rect(imageX, imageY, imageWidth, imageHeight);
+          doc.addImage(imgData, 'PNG', imageX, imageY, imageWidth, imageHeight);
+
+          maxTextY = Math.max(maxTextY, imageY + imageHeight);
         }
-      }
 
-      const notes = document.getElementById("final-notes").value;
-      if (y > 250) {
+        y = maxTextY + 15;
+        doc.setDrawColor(0);
+        doc.setLineWidth(0.1);
+        doc.line(10, y + 5, 200, y + 5);
+        y += 15;
+
+        
+
+        doc.setDrawColor(0);
+        doc.setLineWidth(0.1);
+        doc.line(10, y + 5, 200, y + 5);
+        y += 15;
+            }
+      const finalNotes = document.getElementById('final-notes')?.value || '';
+      if (y + 30 > 280) {
         doc.addPage();
-        y = 10;
+        y = 20;
       }
-      doc.setFontSize(14);
-      doc.text("Job Notes", 10, y);
-      y += 8;
-      doc.setFont(undefined, 'normal');
-      doc.setFontSize(12);
-      doc.text(notes, 10, y, { maxWidth: 180 });
 
-      doc.save("job_measurement.pdf");
-    }
-  </script>
+      doc.setFontSize(14);
+      doc.setFont(undefined, 'bold');
+      doc.text('Final Job Information', 10, y);
+      y += 10;
+      doc.setFontSize(11);
+      doc.setFont(undefined, 'normal');
+      const finalSplit = doc.splitTextToSize(finalNotes, 180);
+      finalSplit.forEach(line => {
+        if (y + 7 > 280) {
+          doc.addPage();
+          y = 20;
+        }
+        doc.text(line, 10, y);
+        y += 7;
+      });
+
+      // Removed auto-close to allow editing after PDF generation
+// doc.save("job-measurements.pdf");
+const blob = doc.output('blob');
+const fileURL = URL.createObjectURL(blob);
+window.open(fileURL, '_blank');
+  })();
+}</script>
+<button class="button" onclick="saveFormData()">Save Form</button>
+    <button class="button" onclick="loadFormData()">Load Saved Form</button>
+    <button class="button" onclick="resetFormData()">Clear Saved Data</button>
+
+<script>
+function saveFormData() {
+  const data = {
+    jobInfo: Array.from(document.querySelectorAll('#job-info input, #job-info select')).map(el => el.value),
+    jobNotes: document.getElementById('final-notes').value
+  };
+  const items = Array.from(document.querySelectorAll('.item')).map(item => {
+    return {
+      html: item.innerHTML,
+      sketch: item.querySelector('canvas')?.toDataURL()
+    };
+  });
+  data.items = items;
+  localStorage.setItem('jobFormData', JSON.stringify(data));
+  alert('Form data saved locally.');
+}
+
+function loadFormData() {
+  const data = JSON.parse(localStorage.getItem('jobFormData'));
+  if (!data) return alert('No saved data found.');
+
+  const fields = document.querySelectorAll('#job-info input, #job-info select');
+  data.jobInfo.forEach((val, idx) => {
+    if (fields[idx]) fields[idx].value = val;
+  });
+  document.getElementById('final-notes').value = data.jobNotes || '';
+
+  // restore items with canvas
+  if (data.items) {
+    const container = document.getElementById('formContainer');
+    container.innerHTML = '';
+    data.items.forEach((entry, index) => {
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.id = `item-${index + 1}`;
+      div.innerHTML = entry.html;
+      container.appendChild(div);
+      initCanvas(index + 1);
+      const canvas = div.querySelector('canvas');
+      if (canvas && entry.sketch) {
+        const img = new Image();
+        img.onload = () => {
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+        };
+        img.src = entry.sketch;
+      }
+    });
+    itemCount = data.items.length;
+  }
+  alert('Saved form data loaded.');
+}
+
+function resetFormData() {
+  localStorage.removeItem('jobFormData');
+  alert('Saved form data cleared.');
+}
+
+
+setInterval(() => {
+  const data = {
+    jobInfo: Array.from(document.querySelectorAll('#job-info input, #job-info select')).map(el => el.value),
+    jobNotes: document.getElementById('final-notes').value
+  };
+  localStorage.setItem('jobFormData', JSON.stringify(data));
+  console.log('Form auto-saved.');
+}, 10000);
+
+</script>
 </body>
 </html>
