@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Job Measurement Form</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -226,6 +227,95 @@
       `;
       container.appendChild(div);
       initCanvas(itemCount);
+    }
+
+    function initCanvas(id) {
+      const canvas = document.getElementById(`canvas-${id}`);
+      const ctx = canvas.getContext('2d');
+      let drawing = false;
+
+      canvas.addEventListener('mousedown', () => drawing = true);
+      canvas.addEventListener('mouseup', () => drawing = false);
+      canvas.addEventListener('mousemove', (e) => {
+        if (!drawing) return;
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      });
+    }
+
+    function clearCanvas(id) {
+      const canvas = document.getElementById(`canvas-${id}`);
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    async function generatePDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      let y = 10;
+
+      function addLine(title, value) {
+        doc.setFont(undefined, 'bold');
+        doc.text(`${title}:`, 10, y);
+        doc.setFont(undefined, 'normal');
+        doc.text(`${value}`, 60, y);
+        y += 8;
+      }
+
+      const jobSection = document.getElementById("job-info");
+      const inputs = jobSection.querySelectorAll("input, select");
+      doc.setFontSize(16);
+      doc.text("Job Information", 10, y);
+      y += 10;
+      inputs.forEach(input => addLine(input.previousSibling.textContent.trim().replace(':', ''), input.value));
+
+      const items = document.querySelectorAll(".item");
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (y > 250) {
+          doc.addPage();
+          y = 10;
+        }
+        doc.setFontSize(14);
+        doc.text(`Item ${i + 1}`, 10, y);
+        y += 8;
+
+        const itemInputs = item.querySelectorAll("input, select, textarea");
+        itemInputs.forEach(input => {
+          const label = input.closest("label")?.textContent?.split(":"[0])?.trim();
+          if (label && input.type !== "button") {
+            addLine(label, input.value || input.textContent || '');
+          }
+        });
+
+        const canvas = item.querySelector("canvas");
+        if (canvas) {
+          const imgData = canvas.toDataURL("image/png");
+          if (y + 60 > 280) {
+            doc.addPage();
+            y = 10;
+          }
+          doc.addImage(imgData, "PNG", 10, y, 80, 50);
+          y += 60;
+        }
+      }
+
+      const notes = document.getElementById("final-notes").value;
+      if (y > 250) {
+        doc.addPage();
+        y = 10;
+      }
+      doc.setFontSize(14);
+      doc.text("Job Notes", 10, y);
+      y += 8;
+      doc.setFont(undefined, 'normal');
+      doc.setFontSize(12);
+      doc.text(notes, 10, y, { maxWidth: 180 });
+
+      doc.save("job_measurement.pdf");
     }
   </script>
 </body>
