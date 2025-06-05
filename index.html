@@ -343,6 +343,26 @@ function generatePDF() {
 
   const items = document.querySelectorAll('.item');
   items.forEach((item, idx) => {
+    // Estimate height for the item before writing
+    const getField = cls => item.querySelector(`.${cls}`)?.value || '';
+    const canvas = item.querySelector('canvas');
+    const imgData = canvas?.toDataURL('image/png');
+    const fields = [
+      getField('field-type'), getField('field-name'), getField('field-height'), getField('field-width'),
+      getField('field-restrictors'), getField('field-flyscreen'), getField('field-external'),
+      getField('field-internal'), getField('field-reveal'), getField('field-access'), getField('field-notes')
+    ];
+    const dummy = new jsPDF();
+    let estHeight = 20;
+    fields.forEach(val => {
+      const lines = dummy.splitTextToSize(val, 140);
+      estHeight += lines.length * 7;
+    });
+    if (imgData) estHeight += 45;
+    if (y + estHeight > 280) {
+      doc.addPage();
+      y = 20;
+    }
     y += 10;
     doc.setFontSize(14);
     doc.text(`Item ${idx + 1}`, 10, y);
