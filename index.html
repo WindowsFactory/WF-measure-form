@@ -242,6 +242,11 @@ function addItem() {
   `;
   container.appendChild(div);
   initCanvas(itemCount);
+  return div;
+}
+
+// ✅ Make addItem globally available so the button works
+window.addItem = addItem;
 }
 
 function initCanvas(id) {
