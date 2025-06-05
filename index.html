@@ -233,9 +233,22 @@
       const canvas = document.getElementById(`canvas-${id}`);
       const ctx = canvas.getContext('2d');
       let drawing = false;
+      let lastX = 0;
+      let lastY = 0;
 
-      canvas.addEventListener('mousedown', () => drawing = true);
-      canvas.addEventListener('mouseup', () => drawing = false);
+      canvas.addEventListener('mousedown', (e) => {
+        drawing = true;
+        const rect = canvas.getBoundingClientRect();
+        lastX = e.clientX - rect.left;
+        lastY = e.clientY - rect.top;
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+      });
+
+      canvas.addEventListener('mouseup', () => {
+        drawing = false;
+      });
+
       canvas.addEventListener('mousemove', (e) => {
         if (!drawing) return;
         const rect = canvas.getBoundingClientRect();
@@ -243,6 +256,8 @@
         const y = e.clientY - rect.top;
         ctx.lineTo(x, y);
         ctx.stroke();
+        lastX = x;
+        lastY = y;
       });
     }
 
@@ -250,6 +265,7 @@
       const canvas = document.getElementById(`canvas-${id}`);
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
     }
 
     async function generatePDF() {
@@ -285,7 +301,7 @@
 
         const itemInputs = item.querySelectorAll("input, select, textarea");
         itemInputs.forEach(input => {
-          const label = input.closest("label")?.textContent?.split(":")[0]?.trim();
+          const label = input.closest("label")?.textContent?.split(":"[0])?.trim();
           if (label && input.type !== "button") {
             addLine(label, input.value || input.textContent || '');
           }
