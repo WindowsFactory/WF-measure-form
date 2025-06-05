@@ -248,7 +248,7 @@ function initCanvas(id) {
   if (canvasInitMap.has(id)) return;
   const canvas = document.getElementById(`canvas-${id}`);
   if (!canvas) return;
-  const ctx = canvas.getContext('2d');
+  const canvasCtx = canvas.getContext('2d');
   let drawing = false;
 
   function getPos(e) {
@@ -261,16 +261,16 @@ function initCanvas(id) {
   function startDraw(e) {
     drawing = true;
     const pos = getPos(e);
-    ctx.beginPath();
-    ctx.moveTo(pos.x, pos.y);
+    canvasCtx.beginPath();
+    canvasCtx.moveTo(pos.x, pos.y);
     e.preventDefault();
   }
 
   function draw(e) {
     if (!drawing) return;
     const pos = getPos(e);
-    ctx.lineTo(pos.x, pos.y);
-    ctx.stroke();
+    canvasCtx.lineTo(pos.x, pos.y);
+    canvasCtx.stroke();
     e.preventDefault();
   }
 
@@ -295,8 +295,8 @@ function initCanvas(id) {
 function clearCanvas(id) {
   const canvas = document.getElementById(`canvas-${id}`);
   if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const canvasCtx = canvas.getContext('2d');
+  canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 window.jspdfLoaded = false;
@@ -343,24 +343,12 @@ function generatePDF() {
 
   const items = document.querySelectorAll('.item');
   items.forEach((item, idx) => {
-    // Estimate height for the item before writing
-    // Removed duplicate definitions inside PDF rendering loop
-    const fields = [
-      getField('field-type'), getField('field-name'), getField('field-height'), getField('field-width'),
-      getField('field-restrictors'), getField('field-flyscreen'), getField('field-external'),
-      getField('field-internal'), getField('field-reveal'), getField('field-access'), getField('field-notes')
-    ];
-    const dummy = new jsPDF();
-    let estHeight = 20;
-    fields.forEach(val => {
-      const lines = dummy.splitTextToSize(val, 140);
-      estHeight += lines.length * 7;
-    });
-    if (imgData) estHeight += 45;
-    if (y + estHeight > 280) {
-      doc.addPage();
-      y = 20;
-    }
+    const getField = cls => item.querySelector(`.${cls}`)?.value || '';
+    const itemCanvas = item.querySelector('canvas');
+    const imgData = itemCanvas?.toDataURL('image/png');
+    // removed duplicate 'fields' declaration that broke script
+    
+    
     y += 10;
     doc.setFontSize(14);
     doc.text(`Item ${idx + 1}`, 10, y);
