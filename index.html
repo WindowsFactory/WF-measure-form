@@ -325,8 +325,14 @@ function generatePDF() {
   jobFields.forEach(([label, value]) => {
     doc.text(`${label}:`, 10, y);
     const split = doc.splitTextToSize(value, 140);
-    doc.text(split, 60, y);
-    y += split.length * 7;
+    split.forEach(line => {
+      if (y > 280) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.text(line, 60, y);
+      y += 7;
+    });
   });
 
   const items = document.querySelectorAll('.item');
@@ -362,8 +368,12 @@ function generatePDF() {
     });
 
     if (imgData) {
-      doc.addImage(imgData, 'PNG', 130, y, 60, 40);
-      y += 45;
+      if (y + 45 > 280) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.addImage(imgData, 'PNG', 130, y, 60, 40);
+    y += 45;
     }
   });
 
