@@ -344,9 +344,7 @@ function generatePDF() {
   const items = document.querySelectorAll('.item');
   items.forEach((item, idx) => {
     // Estimate height for the item before writing
-    const getField = cls => item.querySelector(`.${cls}`)?.value || '';
-    const canvas = item.querySelector('canvas');
-    const imgData = canvas?.toDataURL('image/png');
+    // Removed duplicate definitions inside PDF rendering loop
     const fields = [
       getField('field-type'), getField('field-name'), getField('field-height'), getField('field-width'),
       getField('field-restrictors'), getField('field-flyscreen'), getField('field-external'),
@@ -369,9 +367,7 @@ function generatePDF() {
     y += 10;
     doc.setFontSize(11);
 
-    const getField = cls => item.querySelector(`.${cls}`)?.value || '';
-    const canvas = item.querySelector('canvas');
-    const imgData = canvas?.toDataURL('image/png');
+    // Removed duplicate definitions inside PDF rendering loop
 
     const fields = [
       ['Opening Type', getField('field-type')],
