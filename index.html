@@ -225,7 +225,13 @@ function addItem() {
           </select>
         </label>
         <label>Reveal Size (if required): <input class="field-reveal" type="text"></label>
-        <label>Additional Information: <textarea class="field-notes" rows="3"></textarea></label>
+        <label>Access Confirmed for Item:
+  <select class="field-access">
+    <option>Yes</option>
+    <option>No</option>
+  </select>
+</label>
+<label>Additional Information: <textarea class="field-notes" rows="3"></textarea></label>
       </div>
       <div class="right">
         <label>Sketch:</label>
@@ -357,7 +363,7 @@ function generatePDF() {
       ['External Finish', getField('field-external')],
       ['Internal Finish', getField('field-internal')],
       ['Reveal Size', getField('field-reveal')],
-      ['Additional Information', getField('field-notes')],
+      ['Access Confirmed', getField('field-access')],, getField('field-notes')],
     ];
 
     fields.forEach(([label, value]) => {
