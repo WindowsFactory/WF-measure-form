@@ -285,7 +285,7 @@
 
         const itemInputs = item.querySelectorAll("input, select, textarea");
         itemInputs.forEach(input => {
-          const label = input.closest("label")?.textContent?.split(":"[0])?.trim();
+          const label = input.closest("label")?.textContent?.split(":")[0]?.trim();
           if (label && input.type !== "button") {
             addLine(label, input.value || input.textContent || '');
           }
